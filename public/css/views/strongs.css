@@ -1,0 +1,169 @@
+.strongs-occurrences-accordion.accordion-container {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.dark-mode .strongs-occurrences-accordion.accordion-container {
+    border-color: var(--border-color-dark);
+}
+.strongs-occurrences-accordion .accordion-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+.dark-mode .strongs-occurrences-accordion .accordion-item:not(:last-child) {
+    border-bottom-color: var(--border-color-dark);
+}
+.strongs-occurrences-accordion .accordion-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    background-color: var(--bg-card);
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-primary);
+    transition: background-color 0.2s ease;
+}
+.dark-mode .strongs-occurrences-accordion .accordion-button {
+    background-color: transparent;
+}
+.strongs-occurrences-accordion .accordion-button:hover {
+    background-color: var(--bg-main);
+}
+.strongs-occurrences-accordion .accordion-button > span {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.strongs-occurrences-accordion .accordion-button .controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+.strongs-occurrences-accordion .accordion-button .badge {
+    background-color: var(--bg-main);
+    color: var(--text-secondary);
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+}
+.dark-mode .strongs-occurrences-accordion .accordion-button .badge {
+    background-color: var(--bg-dark-tertiary);
+    color: var(--text-secondary);
+}
+.strongs-occurrences-accordion .accordion-button::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    transition: transform 0.2s ease-in-out;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    order: 2;
+}
+.strongs-occurrences-accordion .accordion-button.expanded::after {
+    transform: rotate(180deg);
+}
+.strongs-occurrences-accordion .accordion-content {
+    padding: 0; 
+    background-color: var(--bg-main);
+    box-shadow: inset 0 3px 5px -3px rgba(0,0,0,0.08);
+}
+.dark-mode .strongs-occurrences-accordion .accordion-content {
+    background-color: #1a1a1a;
+    box-shadow: inset 0 3px 5px -3px rgba(0,0,0,0.3);
+}
+
+.strongs-occurrence-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.strongs-occurrences-accordion .list-group .strongs-occurrence-item:last-child {
+    border-bottom: none;
+}
+.dark-mode .strongs-occurrence-item {
+    border-bottom-color: var(--border-color-dark);
+}
+.strongs-occurrence-item > a {
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.strongs-occurrence-item > a:hover .search-result-ref {
+    color: var(--accent-blue);
+}
+.strongs-occurrence-item .search-result-ref {
+    font-weight: 500;
+}
+.strongs-occurrence-item .search-result-snippet {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.strongs-pronunciation {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-top:0;
+}
+
+/* --- OPTIMIERTE STILE FÜR EXPAND/COLLAPSE FUNKTION --- */
+
+.strongs-content-wrapper {
+    position: relative;
+    padding-bottom: 1rem;
+}
+.strongs-content {
+    max-height: 250px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out; /* Längere Transition für smoothen Effekt */
+}
+.strongs-content-wrapper.expanded .strongs-content {
+    max-height: 1000px;
+}
+
+/* Verlauf am Ende des eingeklappten Textes */
+.strongs-content-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 40px; /* Position über dem Button */
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to top, var(--bg-card), transparent);
+    pointer-events: none;
+    opacity: 1; /* Standardmäßig sichtbar */
+    transition: opacity 0.4s ease-in-out; /* Transition für die Opazität */
+}
+.dark-mode .strongs-content-wrapper::after {
+     background: linear-gradient(to top, var(--bg-card), transparent);
+}
+
+.strongs-content-wrapper.expanded::after {
+    opacity: 0; /* Bei Expanded ausblenden */
+}
+
+.strongs-expand-btn {
+    background: none;
+    border: none;
+    color: var(--accent-blue);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+.strongs-expand-btn:hover {
+    text-decoration: underline;
+}
