@@ -1,0 +1,35 @@
+/* css/views/dictionary.css */
+
+.dictionary-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    align-items: center;
+}
+
+.alpha-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.alpha-filter .btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.dictionary-list-item {
+    font-weight: 500;
+    font-size: 1rem;
+    padding: var(--spacing-md);
+}
+
+.dictionary-definition-content.markdown-body {
+    padding-top: 0;
+}
