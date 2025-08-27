@@ -1,9 +1,3 @@
-Absolut\! Nach all den Anpassungen und Verfeinerungen hat die App einen sehr soliden und beeindruckenden Stand erreicht. Hier ist die aktualisierte `README.md`-Datei, die den finalen Funktionsumfang und die technische Funktionsweise Ihres Projekts beschreibt.
-
-Sie können diesen Text einfach kopieren und in eine `README.md`-Datei in Ihrem GitHub-Projekt einfügen.
-
------
-
 # Bibel-Studien-App (Private Edition)
 
 Dies ist eine moderne, schnelle und vollständig lokale Web-Anwendung für das persönliche Bibelstudium. Die App ist als Single-Page-Application (SPA) mit reinem JavaScript, HTML und CSS konzipiert und läuft vollständig im Browser, ohne dass eine externe Datenbank oder ein Server-Backend für die Kernfunktionen erforderlich ist. Alle Daten werden lokal von JSON-Dateien geladen und im Speicher gehalten, was eine extrem schnelle und private Nutzung ermöglicht.
