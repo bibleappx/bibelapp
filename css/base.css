@@ -1,0 +1,253 @@
+/*
+==============================================
+== LOKALE SCHRIFTARTEN DEFINIEREN (OPTIMIERT) ==
+==============================================
+*/
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400; /* Regular */
+  font-display: swap;
+  src: url("fonts/Inter_18pt-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600; /* SemiBold */
+  font-display: swap;
+  src: url("fonts/Inter_18pt-SemiBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700; /* Bold */
+  font-display: swap;
+  src: url("fonts/Inter_24pt-Bold.ttf") format("truetype");
+}
+
+/*
+==============================================
+== CORE STYLES & VARIABLES                  ==
+==============================================
+*/
+:root {
+    --bg-main: #F3F2F1; /* Azure Light Background */
+    --bg-card: #FFFFFF;
+    --text-primary: #201F1E; /* Azure Dark Text */
+    --text-secondary: #605E5C; /* Azure Secondary Text */
+    --text-tertiary: #0078D4; /* Azure Blue for Accents */
+    --text-on-primary: #FFFFFF;
+    --border-color: #EDEBE9; /* Azure Border */
+    --accent-blue: #0078D4; /* Azure Primary Blue */
+    --accent-blue-hover: #005BA1; /* Azure Blue Hover */
+    --accent-blue-subtle: #E8F0FE; /* Azure Subtle Blue */
+    --accent-green: #107C10; /* Azure Green */
+    --accent-red: #D13438; /* Azure Red */
+    --accent-purple: #5C2D91; /* Azure Purple */
+    --accent-orange: #ED8B00; /* Azure Orange */
+    --accent-teal: #00B7C3; /* Azure Teal */
+    --tag-bg: #EDEBE9; /* Azure Tag Background */
+    --tag-text: #201F1E; /* Azure Tag Text */
+    --accent-teal-muted: #E6F7FA; /* Azure Light Teal */
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Subtle Azure Shadow */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --spacing-xs: 0.125rem; /* Minimal Spacing */
+    --spacing-sm: 0.25rem; /* Minimal Padding/Margin */
+    --spacing-md: 0.5rem;
+    --spacing-lg: 0.75rem;
+    --spacing-xl: 1rem;
+    --transition-duration: 0.2s;
+    --nav-height: 48px; /* Azure-like Compact Nav */
+    --context-nav-actual-height: 48px;
+    --gradient-accent: linear-gradient(90deg, #0078D4 0%, #00B7C3 100%); /* Azure Gradient */
+}
+
+body.dark-mode {
+    --bg-main: #252423; /* Azure Dark Background */
+    --bg-card: #2D2C2B; /* Azure Dark Card */
+    --text-primary: #F3F2F1; /* Azure Light Text */
+    --text-secondary: #A19F9D; /* Azure Secondary Dark Text */
+    --text-tertiary: #60A5FA; /* Azure Blue for Dark Mode */
+    --border-color: #3C3B39; /* Azure Dark Border */
+    --accent-blue: #60A5FA; /* Azure Blue for Dark Mode */
+    --accent-blue-hover: #3B82F6; /* Azure Blue Hover Dark */
+    --accent-blue-subtle: #2D3748; /* Azure Subtle Blue Dark */
+    --tag-bg: #3C3B39; /* Azure Dark Tag */
+    --tag-text: #F3F2F1; /* Azure Dark Tag Text */
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Stronger Dark Mode Shadow */
+    --accent-teal-muted: #1E3A8A; /* Azure Dark Teal */
+    --gradient-accent: linear-gradient(90deg, #60A5FA 0%, #00B7C3 100%); /* Azure Dark Gradient */
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    color-scheme: light dark;
+}
+
+body {
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    padding-top: var(--nav-height);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease;
+    font-size: 14px; /* Azure-like Font Size */
+}
+
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: color var(--transition-duration) ease;
+}
+
+a:hover {
+    color: var(--accent-blue-hover);
+}
+
+.view-title {
+    font-size: 1.5rem; /* Azure-like Heading */
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+h4.view-title {
+    font-size: 1.125rem;
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+}
+
+mark {
+    background-color: var(--accent-blue-subtle);
+    color: var(--accent-blue);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+/*
+============================================================
+== MARKDOWN STYLES (AZURE-LIKE) ==
+============================================================
+*/
+.markdown-body {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+}
+
+body.dark-mode .markdown-body {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/*
+==============================================
+== BUTTON STYLES (AZURE-LIKE) ==
+==============================================
+*/
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--accent-blue);
+    color: var(--text-on-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-align: center;
+    transition: background-color var(--transition-duration) ease;
+    cursor: pointer;
+    border: none;
+}
+
+.button:hover {
+    background-color: var(--accent-blue-hover);
+}
+
+.button--gradient {
+    background: var(--gradient-accent);
+}
+
+.button--secondary {
+    background-color: transparent;
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.button--secondary:hover {
+    background-color: var(--accent-blue-subtle);
+    color: var(--accent-blue-hover);
+}
+
+/*
+==============================================
+== CARD STYLES (COMPACT AZURE-LIKE) ==
+==============================================
+*/
+.card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-sm);
+}
+
+.card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/*
+==============================================
+== NAVIGATION STYLES (AZURE-LIKE) ==
+==============================================
+*/
+.nav {
+    height: var(--nav-height);
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+    z-index: 1000;
+}
+
+.nav a {
+    margin-right: var(--spacing-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/*
+==============================================
+== UTILITY CLASSES ==
+==============================================
+*/
+.text-center {
+    text-align: center;
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+.mb-sm {
+    margin-bottom: var(--spacing-sm);
+}

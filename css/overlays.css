@@ -1,0 +1,445 @@
+/* --- Lade-Spinner --- */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--tag-bg);
+    border-bottom-color: var(--accent-blue);
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-sm {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-bottom-color: var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* --- Toast-Benachrichtigungen --- */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.app-toast {
+    background-color: var(--text-primary);
+    color: var(--bg-card);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    min-width: 250px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.app-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Allgemeine Popup-Struktur & Zentrierung mit Glassmorphism --- */
+.verse-popup {
+    position: fixed;
+    z-index: 1060; /* Popups liegen über Backdrop und FAB */
+    
+    /* Dies ist der Haupt-Glassmorphism-Effekt für das gesamte Popup */
+    background-color: hsla(0, 0%, 100%, 0.8); /* Semi-transparentes Weiß */
+    backdrop-filter: blur(10px); /* Hintergrundunschärfe */
+    -webkit-backdrop-filter: blur(10px); /* Für Safari */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: none; /* Kein Schatten wie im Navigations-Beispiel */
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    box-sizing: border-box;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.98);
+
+    width: min(380px, calc(100vw - 40px));
+    /* NEU: Höhe angepasst für mehr vertikalen Abstand */
+    max-height: calc(100vh - 460px); 
+    overflow: hidden; /* Scrollbalken nur im Inhalt, nicht am Popup selbst */
+}
+
+.verse-popup.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    visibility: visible;
+}
+
+/* Innerer Content-Bereich des Vers-Popups - muss transparent sein, damit der Blur durchscheint */
+.verse-popup-content {
+    background-color: transparent; /* Wichtig: transparent, um Blur durchzulassen */
+    padding: var(--spacing-md);
+    max-height: 250px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.popup-verse-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.popup-verse-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.popup-verse-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.popup-verse-text strong {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+}
+
+.popup-jump-link.btn-icon {
+    flex-shrink: 0;
+}
+
+/* --- Floating Action Button (FAB) --- */
+#fab-container {
+    position: fixed;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    z-index: 1040;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+#fab-main-button {
+    background-color: var(--accent-blue);
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
+}
+
+#fab-main-button i {
+    font-size: 1.5rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#fab-main-button:hover {
+    background-color: var(--accent-blue-hover);
+    transform: scale(1.05);
+}
+
+#fab-container.open #fab-main-button i {
+    transform: rotate(45deg);
+}
+
+#fab-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: visibility 0.2s, opacity 0.2s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#fab-container.open #fab-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fab-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.fab-menu-item .fab-label {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.fab-menu-item .fab-icon {
+    background-color: var(--bg-card);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.fab-menu-item:hover .fab-icon {
+    background-color: var(--accent-blue);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* --- MODERNES SCROLLBAR-STYLING (FÜR ALLE POPUPS) --- */
+.verse-popup-content,
+.chapter-popup-scrollable-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) var(--bg-card);
+}
+
+.verse-popup-content::-webkit-scrollbar,
+.chapter-popup-scrollable-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.verse-popup-content::-webkit-scrollbar-track,
+.chapter-popup-scrollable-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.verse-popup-content::-webkit-scrollbar-thumb,
+.chapter-popup-scrollable-content::-webkit-scrollbar-thumb {
+    background-color: var(--text-secondary);
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+.verse-popup-content::-webkit-scrollbar-thumb:hover,
+.chapter-popup-scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-primary);
+}
+
+body.dark-mode .verse-popup-content,
+body.dark-mode .chapter-popup-scrollable-content {
+    scrollbar-color: rgba(255, 255, 255, 0.1) var(--bg-card);
+}
+
+body.dark-mode .verse-popup-content::-webkit-scrollbar-thumb,
+body.dark-mode .chapter-popup-scrollable-content::-webkit-scrollbar-thumb {
+    background-color: var(--text-tertiary);
+}
+
+body.dark-mode .verse-popup-content::-webkit-scrollbar-thumb:hover,
+body.dark-mode .chapter-popup-scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-secondary);
+}
+
+/* --- SPEZIFISCHES KAPITEL-POPUP STYLING (überschreibt .verse-popup) --- */
+.chapter-popup {
+    width: min(500px, calc(100vw - 40px));
+}
+
+/* Der Header des Popups (sticky) - muss transparent sein */
+.chapter-popup-header {
+    background-color: transparent; 
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+}
+
+.chapter-popup-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    flex-shrink: 1;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+    text-align: left;
+}
+
+/* Der scrollbare Inhaltsbereich des Popups - muss transparent sein */
+.chapter-popup-scrollable-content {
+    background-color: transparent; 
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md);
+    max-height: unset;
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+/* Stil für einzelne Verse im Kapitel-Popup */
+.chapter-single-verse {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 var(--spacing-sm) 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.chapter-single-verse:last-child {
+    margin-bottom: 0;
+}
+
+.chapter-single-verse sup {
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin: 0 0.1em 0 0.4em;
+}
+
+.chapter-single-verse sup:first-of-type {
+    margin-left: 0;
+}
+
+.chapter-single-verse a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.chapter-single-verse a:hover sup {
+    color: var(--accent-blue-hover);
+    text-decoration: underline;
+}
+
+/* --- Popup-Backdrop --- */
+#popup-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1059;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+/* --- HIER DEN NEUEN CODE EINFÜGEN --- */
+
+/* Header für das Verse-Popup mit den Kontext-Buttons */
+.verse-popup-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px; /* Kleiner Abstand zwischen den Buttons */
+    padding: 8px 12px; /* Etwas Innenabstand */
+    
+    /* Wichtig: Transparent, um den Glassmorphism-Effekt beizubehalten */
+    background-color: transparent; 
+    
+    /* Trennlinie zum Inhalt */
+    border-bottom: 1px solid var(--border-color); 
+    
+    /* Verhindert, dass der Header schrumpft */
+    flex-shrink: 0; 
+}
+
+/* Dark Mode Anpassung für die Trennlinie */
+body.dark-mode .verse-popup-header {
+    border-color: var(--dark-mode-border, #555);
+}
+
+/* --- ENDE DES NEUEN CODES --- */
+/* --- Dark Mode Anpassungen --- */
+body.dark-mode .verse-popup {
+    background-color: hsla(220, 10%, 20%, 0.5); /* Dunkler, semi-transparenter Hintergrund */
+    border: 1px solid var(--dark-mode-border, #555);
+    box-shadow: none;
+}
+
+body.dark-mode .chapter-popup-header {
+    background-color: transparent;
+    border-color: var(--dark-mode-border, #555);
+}
+
+body.dark-mode .chapter-popup-header h2 {
+    color: var(--dark-mode-text-color, #eee);
+}
+
+body.dark-mode .verse-popup-content,
+body.dark-mode .chapter-popup-scrollable-content {
+    background-color: transparent; 
+    color: var(--dark-mode-text-color, #ddd);
+}
+
+body.dark-mode .popup-verse-text strong {
+    color: var(--dark-mode-text-color, #eee);
+}
+
+body.dark-mode .popup-verse-item {
+    border-color: var(--dark-mode-border, #555);
+}
+
+body.dark-mode .chapter-single-verse {
+    color: var(--dark-mode-text-color, #ddd);
+}

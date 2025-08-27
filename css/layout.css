@@ -1,0 +1,51 @@
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.app-view {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    transition: margin-top var(--transition-duration) ease;
+}
+
+.d-flex { display: flex; }
+.d-grid { display: grid; }
+.justify-content-between { justify-content: space-between; }
+.justify-content-center { justify-content: center; }
+.justify-content-end { justify-content: flex-end; }
+.align-items-center { align-items: center; }
+.align-items-start { align-items: flex-start; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-grow-1 { flex-grow: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.gap-1 { gap: var(--spacing-xs); }
+.gap-2 { gap: var(--spacing-sm); }
+.gap-3 { gap: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.ms-auto { margin-left: auto; }
+.ms-2 { margin-left: var(--spacing-sm); }
+.me-2 { margin-right: var(--spacing-sm); }
+.p-3 { padding: var(--spacing-md); }
+.text-danger { color: var(--accent-red); }
+.text-tertiary { color: var(--text-tertiary); }
+.fw-bold, .form-label { font-weight: 600; }
+.text-decoration-none { text-decoration: none; }
+.w-auto { width: auto !important; }
+
+/* Vertikale Trennlinie für Toolbars */
+.vr {
+    display: inline-block;
+    align-self: stretch;
+    width: 1px;
+    min-height: 1.5em; /* Mindesthöhe der Linie */
+    background-color: var(--border-color);
+    margin: 0 0.5rem; /* Abstand links und rechts */
+}

@@ -1,0 +1,71 @@
+@media (max-width: 768px) {
+    body { font-size: 17px; padding-top: 55px; }
+    .container { padding-left: 0.5rem; padding-right: 0.5rem; }
+    .view-title { font-size: 1.4rem; }
+    h4.view-title { font-size: 1.1rem; }
+
+    .nav-link { padding: 0.5rem; }
+    .navbar-nav { margin-left: 0.5rem; }
+    .navbar-brand { font-size: 1.1rem; }
+
+    .context-nav { top: 55px; }
+
+    .main-navbar .ms-auto { display: none; }
+    .navbar-toggler { display: block; font-size: 1.5rem; }
+    .navbar-collapse {
+        display: none;
+        position: absolute;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background-color: var(--bg-card);
+        padding: var(--spacing-md);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .navbar-collapse.show { display: flex; }
+    .navbar-collapse .navbar-nav { flex-direction: column; align-items: stretch; width: 100%; margin: 0; }
+    .navbar-collapse .nav-link {
+        justify-content: flex-start;
+        width: 100%;
+        height: auto;
+        padding: 0.5rem 0.8rem;
+    }
+    .navbar-collapse .nav-link span { display: inline; }
+    .navbar-collapse .ms-auto { display: block; margin-top: 1rem; text-align: center; }
+
+    .page-item { min-width: 32px; height: 32px; }
+    .input-group { flex-direction: column; gap: var(--spacing-xs); }
+    .input-group input, .input-group button { width: 100%; height: auto; }
+    .input-group button { padding: 0.6rem 1rem; }
+
+    .list-group-item .search-result-ref {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .list-group-item > a {
+        flex-direction: column;
+        width: calc(100% - 60px);
+    }
+    .list-group-item .search-result-snippet {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .filter-pills {
+        justify-content: center;
+    }
+    .navbar-search {
+        display: none;
+    }
+
+    /* NEUE REGEL HINZUGEFÜGT */
+    .strongs-pagination {
+        flex-wrap: wrap; /* Erlaubt den Buttons, in die nächste Zeile umzubrechen */
+    }
+}

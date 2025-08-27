@@ -1,0 +1,104 @@
+/*
+==============================================
+== STYLING FÜR GERENDERTEN INHALT & EDITOR  ==
+==============================================
+*/
+/*
+  HINWEIS: Die alten .ql-* Klassen werden beibehalten, da sie in den
+  .entry-detail-content-Containern für die benutzerdefinierten Blöcke
+  noch verwendet werden könnten. Das Hauptstyling zielt jetzt aber auf
+  Standard-HTML-Tags ab.
+*/
+
+.entry-detail-content, .card-body #markdown-editor, .comparison-verse-text, .popup-verse-text, .context-paragraph {
+    line-height: 1.6;
+}
+
+.verse-mention-hover,
+.chapter-mention-hover { /* Selektor erweitert */
+    font-weight: 500;
+    color: var(--accent-blue);
+    background-color: var(--accent-blue-subtle);
+    padding: 1px 5px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border-bottom: 1px dashed var(--accent-blue);
+    text-decoration: none;
+}
+.verse-mention-hover:hover,
+.chapter-mention-hover:hover { /* Selektor erweitert */
+    background-color: var(--accent-blue);
+    color: white;
+    text-decoration: none;
+}
+
+.strongs-mention-hover {
+    color: #006400; /* Dunkelgrün */
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.strongs-mention-hover:hover {
+    background-color: rgba(0, 100, 0, 0.1);
+}
+.dark-mode .strongs-mention-hover {
+    color: #3cb371;
+}
+.dark-mode .strongs-mention-hover:hover {
+    background-color: rgba(60, 179, 113, 0.15);
+}
+
+.tags-container { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: var(--spacing-sm); }
+.tag-badge {
+    padding: 0.2em 0.5em;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--accent-teal-muted);
+    color: var(--accent-teal);
+    transition: all var(--transition-duration) ease;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.tag-badge:hover { background-color: var(--accent-teal); color: var(--text-on-primary); transform: translateY(-1px); }
+/* --- START: NEUE STILE FÜR WÖRTERBUCH-VERLINKUNG --- */
+
+/* Hebt Wörter hervor, für die ein Wörterbuch-Eintrag existiert */
+.dictionary-mention-hover {
+    cursor: pointer;
+    border-bottom: 1px dotted var(--accent-blue);
+    transition: background-color var(--transition-duration) ease;
+}
+
+.dictionary-mention-hover:hover {
+    background-color: var(--accent-blue-subtle);
+}
+
+/* Styling für die Liste der verwandten Themen im Popup */
+.related-entries-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.related-entries-list li {
+    padding: var(--spacing-sm) 0;
+}
+
+.related-entries-list li:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.related-entries-list a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: block;
+    transition: color var(--transition-duration) ease;
+}
+
+.related-entries-list a:hover {
+    color: var(--accent-blue);
+}
+
+/* --- ENDE: NEUE STILE --- */

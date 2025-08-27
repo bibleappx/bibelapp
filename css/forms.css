@@ -1,0 +1,162 @@
+input, select, textarea {
+    appearance: none;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.6rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    width: 100%;
+    transition: all var(--transition-duration) ease;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2); }
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b778c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.1em 1.1em;
+    padding-right: 2rem;
+}
+body.dark-mode select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23b0b0b0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); }
+.input-group { display: flex; gap: var(--spacing-sm); }
+
+.navbar-search {
+    flex-grow: 1;
+    max-width: 450px;
+    margin-left: var(--spacing-lg);
+    margin-right: var(--spacing-sm);
+}
+.navbar-search .form-control,
+.navbar-search .btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    height: 36px;
+}
+
+.tags-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    align-items: center;
+    background-color: var(--bg-main);
+    transition: all var(--transition-duration) ease;
+}
+.tags-input-container:focus-within {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+}
+.tags-input-wrapper {
+    display: flex;
+    flex: 1;
+    min-width: 120px;
+}
+.tags-input-container input {
+    border: none;
+    outline: none;
+    padding: var(--spacing-xs);
+    background: transparent;
+    width: 100%;
+}
+.tags-input-container .tag-badge {
+    margin-top: 0;
+}
+.tags-input-container .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--accent-teal);
+    opacity: 0.7;
+    font-size: 1.1em;
+    padding: 0 0.2em;
+    line-height: 1;
+}
+.tags-input-container .remove-btn:hover {
+    opacity: 1;
+    color: var(--accent-red);
+}
+
+/* --- NEUES MARKDOWN EDITOR STYLING --- */
+.markdown-editor-wrapper {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-card);
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.markdown-editor-wrapper:focus-within {
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+    border-color: var(--accent-blue);
+}
+
+.markdown-editor-toolbar {
+    background-color: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.markdown-editor-view-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.markdown-editor-view-toggle .btn {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--text-secondary);
+}
+
+.markdown-editor-view-toggle .btn.active {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.markdown-editor-format-buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.markdown-editor-format-buttons .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.markdown-editor-format-buttons .btn i {
+    font-size: 1rem;
+}
+
+#markdown-editor {
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: var(--spacing-md);
+    color: var(--text-primary);
+    resize: vertical;
+}
+
+#markdown-editor-preview {
+    padding: var(--spacing-md);
+    border-radius: 0 !important;
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary);
+    line-height: 1.6;
+}

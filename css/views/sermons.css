@@ -1,0 +1,72 @@
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-duration) ease, background-color var(--transition-duration) ease;
+}
+.back-button:hover {
+    color: var(--accent-blue);
+    background-color: var(--bg-main);
+}
+.editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+.editor-actions .btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+}
+
+.detail-meta {
+    margin: var(--spacing-md) 0 var(--spacing-lg) 0;
+}
+.detail-meta p {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.8rem;
+}
+.detail-meta i {
+    color: var(--accent-teal);
+    width: 16px;
+    text-align: center;
+    margin-top: 4px;
+}
+.sermon-bible-verse-link {
+    white-space: nowrap;
+}
+
+.editor-form-group {
+    margin-bottom: 1.2rem;
+}
+
+@media print {
+    body {
+        margin-top: -120px;
+        background-color: #fff;
+        color: #000;
+    }
+    .main-navbar, .context-nav, .fab-container, .editor-actions, .back-button, #private-notes-group, .editor-stats, .card-header .btn-icon, .detail-meta .btn {
+        display: none !important;
+    }
+    .card {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        border: none;
+        margin-top: 0;
+    }
+}
