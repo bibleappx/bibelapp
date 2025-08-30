@@ -81,3 +81,21 @@
     margin-bottom: var(--spacing-md);
     border-color: var(--border-color);
 }
+/* css/views/commentary.css */
+
+.commentary-item {
+    padding: var(--spacing-md);
+    box-shadow:none;
+    border-radius:0px;
+    font-size:12px;
+}
+
+.commentary-item:not(:last-child) {
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* NEU: Fügt den abwechselnden Hintergrund hinzu */
+.commentary-item:nth-child(even) {
+    background-color: var(--bg-main);
+}

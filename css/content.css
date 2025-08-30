@@ -1,15 +1,3 @@
-/*
-==============================================
-== STYLING FÜR GERENDERTEN INHALT & EDITOR  ==
-==============================================
-*/
-/*
-  HINWEIS: Die alten .ql-* Klassen werden beibehalten, da sie in den
-  .entry-detail-content-Containern für die benutzerdefinierten Blöcke
-  noch verwendet werden könnten. Das Hauptstyling zielt jetzt aber auf
-  Standard-HTML-Tags ab.
-*/
-
 .entry-detail-content, .card-body #markdown-editor, .comparison-verse-text, .popup-verse-text, .context-paragraph {
     line-height: 1.6;
 }
@@ -22,7 +10,6 @@
     padding: 1px 5px;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    border-bottom: 1px dashed var(--accent-blue);
     text-decoration: none;
 }
 .verse-mention-hover:hover,
@@ -61,7 +48,6 @@
     white-space: nowrap;
 }
 .tag-badge:hover { background-color: var(--accent-teal); color: var(--text-on-primary); transform: translateY(-1px); }
-/* --- START: NEUE STILE FÜR WÖRTERBUCH-VERLINKUNG --- */
 
 /* Hebt Wörter hervor, für die ein Wörterbuch-Eintrag existiert */
 .dictionary-mention-hover {
@@ -74,7 +60,6 @@
     background-color: var(--accent-blue-subtle);
 }
 
-/* Styling für die Liste der verwandten Themen im Popup */
 .related-entries-list {
     list-style: none;
     padding: 0;
@@ -100,5 +85,3 @@
 .related-entries-list a:hover {
     color: var(--accent-blue);
 }
-
-/* --- ENDE: NEUE STILE --- */

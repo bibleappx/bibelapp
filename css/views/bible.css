@@ -309,8 +309,13 @@
     color: var(--accent-red, #c00);
 }
 
-/* --- KORREKTUR FÜR DIE BUTTONS IM VERGLEICHS-HEADER --- */
 #translation-actions {
     display: inline-flex;
     flex-wrap: nowrap;
+}
+
+#inline-strongs-toggle.active {
+    background-color: var(--accent-blue-subtle);
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
 }
