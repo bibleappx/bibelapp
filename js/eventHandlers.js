@@ -4,7 +4,6 @@ import { postAPI } from './api.js';
 import { router } from './router.js';
 import { showVersePopup, hideVersePopup, showStrongsPopup, hideStrongsPopup, showChapterPopup, hideChapterPopup, showCommentaryPopup, hideCommentaryPopup, showDictionaryPopup, hideDictionaryPopup } from './ui/popups.js';
 import { rebuildSermonIndex, buildStrongsVerseIndex } from './services/dataBuilder.js';
-import { findCommentsForVerse } from './views/bibleView.js';
 
 function handleGlobalClick(e) {
     const anchor = e.target.closest('a[data-link]');
@@ -358,7 +357,7 @@ async function handleAppClicks(e) {
         const bookNumber = parseInt(fullCommentaryBtn.dataset.bookNumber);
         const chapter = parseInt(fullCommentaryBtn.dataset.chapter);
         const verseNum = parseInt(fullCommentaryBtn.dataset.verse);
-        const commentariesBySource = findCommentsForVerse(bookNumber, chapter, verseNum);
+        const commentariesBySource = utils.findCommentsForVerse(bookNumber, chapter, verseNum);
         if (commentariesBySource.length > 0) {
             const activeTabId = document.querySelector('#commentary-tabs .btn-primary')?.dataset.commentaryTab;
             const activeSource = commentariesBySource.find(s => s.sourceId === activeTabId);

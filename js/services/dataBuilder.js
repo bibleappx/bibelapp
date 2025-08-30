@@ -2,24 +2,6 @@ import * as state from '../state.js';
 import * as utils from '../utils.js';
 import { getProcessedEntry } from './contentProcessor.js';
 
-function buildDictionaryIndex() {
-    const wordIndex = new Set();
-    state.availableDictionaries.forEach(dict => {
-        if (dict.data) {
-            dict.data.forEach(entry => {
-                // Fügt das Haupt-Thema und mögliche Varianten hinzu
-                const topics = entry.topic.split(/[,;]/).map(t => t.trim().toLowerCase());
-                topics.forEach(t => {
-                    if (t.length > 2) { // Ignoriert sehr kurze Wörter
-                        wordIndex.add(t);
-                    }
-                });
-            });
-        }
-    });
-    state.setDictionaryWordIndex(wordIndex);
-}
-
 export function getAllEntries() {
     const allEntries = [];
     Object.entries(state.notes).forEach(([key, verseNotes]) => {
@@ -43,6 +25,23 @@ export function getAllEntries() {
     });
     return allEntries;
 };
+
+function buildDictionaryIndex() {
+    const wordIndex = new Set();
+    state.availableDictionaries.forEach(dict => {
+        if (dict.data) {
+            dict.data.forEach(entry => {
+                const topics = entry.topic.split(/[,;]/).map(t => t.trim().toLowerCase());
+                topics.forEach(t => {
+                    if (t.length > 2) {
+                        wordIndex.add(t);
+                    }
+                });
+            });
+        }
+    });
+    state.setDictionaryWordIndex(wordIndex);
+}
 
 function rebuildAllEntriesCache() {
     const entries = getAllEntries();
@@ -134,6 +133,14 @@ export function buildInitialData() {
         }
     });
     state.setBibleStructure(bibleStructure);
+    
+    const singleChapterBooks = new Set();
+    Object.entries(state.bibleStructure).forEach(([bookNum, chapters]) => {
+        if (Object.keys(chapters).length === 1) {
+            singleChapterBooks.add(parseInt(bookNum, 10));
+        }
+    });
+    state.setSingleChapterBooks(singleChapterBooks);
 
     const aliasList = state.books.flatMap(book => 
         [book.long_name, ...book.short_name.replace(/[\[\]]/g, '').split(',')].map(name => name.trim()).filter(Boolean).map(alias => ({ alias: alias.toLowerCase(), book }))
@@ -164,7 +171,7 @@ export function buildInitialData() {
         }
     });
 
-    buildDictionaryIndex(); // NEU
+    buildDictionaryIndex();
     rebuildAllEntriesCache();
     buildStrongsVerseIndex();
     buildReferenceIndexes();

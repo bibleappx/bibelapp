@@ -267,7 +267,7 @@ export function showCommentaryPopup(triggerElement) {
             <h2>${sourceName}</h2>
         </div>
         <div class="chapter-popup-scrollable-content">
-            <div class="markdown-body">${popupContentHtml}</div>
+            <div>${popupContentHtml}</div>
         </div>`;
     showPopup(commentaryPopup);
 }
@@ -292,7 +292,6 @@ export function showDictionaryPopup(triggerElement) {
     });
 
     const sortedEntries = Array.from(relatedEntries.values()).sort((a, b) => {
-        // Exakte Übereinstimmungen zuerst, dann alphabetisch
         if (a.topic.toLowerCase() === clickedTopic) return -1;
         if (b.topic.toLowerCase() === clickedTopic) return 1;
         return a.topic.localeCompare(b.topic);

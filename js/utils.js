@@ -1,5 +1,6 @@
 import * as state from './state.js';
 import { router } from './router.js';
+import { getProcessedEntry } from './services/contentProcessor.js';
 
 export const getBook = (bookNumber) => state.books.find(b => b.book_number === bookNumber);
 
@@ -62,11 +63,8 @@ export const parseVerseList = (verseListStr) => {
 export const getBookShortNamesPattern = () => {
     const allShortNames = state.books.flatMap(book =>
         book.short_name.replace(/[\[\]]/g, '').split(',').map(name => {
-            let cleanName = name.trim();
-            if (!cleanName) return null;
-            cleanName = escapeRegExp(cleanName);
-            cleanName = cleanName.replace(/(\d)/, '$1\\s?');
-            return cleanName;
+            const cleanName = name.trim();
+            return cleanName ? escapeRegExp(cleanName) : null;
         }).filter(Boolean)
     );
     allShortNames.sort((a, b) => b.length - a.length);
@@ -102,14 +100,23 @@ export const parseVerseString = (verseString) => {
     const bookMatch = findBookMatch(verseString);
     if (!bookMatch) return null;
     const { book, matchedAlias } = bookMatch;
-    const remainingString = verseString.substring(matchedAlias.length).trim();
-    const numberMatch = remainingString.match(/^(\d+)\s*[,:\s]\s*(\d+)/);
-    if (numberMatch && numberMatch.length === 3) {
-        return {
-            book_number: book.book_number,
-            chapter: parseInt(numberMatch[1], 10),
-            verse: parseInt(numberMatch[2], 10)
-        };
+    
+    if (state.singleChapterBooks.has(book.book_number)) {
+        const verseListStr = verseString.substring(matchedAlias.length).trim();
+        const verseNumbers = parseVerseList(verseListStr);
+        if (verseNumbers.length > 0) {
+            return { book_number: book.book_number, chapter: 1, verse: verseNumbers[0] };
+        }
+    } else {
+        const remainingString = verseString.substring(matchedAlias.length).trim();
+        const numberMatch = remainingString.match(/^(\d+)\s*[,:\s]\s*(\d+)/);
+        if (numberMatch && numberMatch.length === 3) {
+            return {
+                book_number: book.book_number,
+                chapter: parseInt(numberMatch[1], 10),
+                verse: parseInt(numberMatch[2], 10)
+            };
+        }
     }
     return null;
 };
@@ -117,22 +124,36 @@ export const parseVerseString = (verseString) => {
 export const parseMultiVerseQuery = (query) => {
     const allVerses = [];
     if (!query || !query.trim()) return allVerses;
+
     const bookShortNamesPattern = getBookShortNamesPattern();
-    const chunkRegex = new RegExp(`(?:\\b(${bookShortNamesPattern})\\s*)?(\\d+)\\s*(?:,|:|\\s)\\s*([\\d,.-–;]+)`, 'gi');
-    let lastSeenBook = null;
+    const chunkRegex = new RegExp(`(?:\\b(${bookShortNamesPattern})\\s*)([\\d,.-–;\\s]+)`, 'gi');
+    
     let match;
     while ((match = chunkRegex.exec(query)) !== null) {
-        let [, bookName, chapterStr, verseListStr] = match;
-        if (bookName) {
-            lastSeenBook = findBookByAlias(bookName.trim().toLowerCase());
-        }
-        const currentChapter = parseInt(chapterStr, 10);
-        if (lastSeenBook && !isNaN(currentChapter) && verseListStr) {
-            const verseNumbers = parseVerseList(verseListStr);
+        let [, bookName, numbersStr] = match;
+        const book = findBookByAlias(bookName.trim().toLowerCase());
+        if (!book) continue;
+
+        if (state.singleChapterBooks.has(book.book_number)) {
+            const verseNumbers = parseVerseList(numbersStr);
             verseNumbers.forEach(vNum => {
-                const verseData = state.verses.find(v => v.book_number === lastSeenBook.book_number && v.chapter === currentChapter && v.verse === vNum);
+                const verseData = state.verses.find(v => v.book_number === book.book_number && v.chapter === 1 && v.verse === vNum);
                 if (verseData) allVerses.push(verseData);
             });
+        } else {
+            const chapterVerseRegex = /(\d+)\s*[,.:\s]\s*([\d,.-–;]+)/g;
+            let chapterMatch;
+            while ((chapterMatch = chapterVerseRegex.exec(numbersStr)) !== null) {
+                const chapter = parseInt(chapterMatch[1], 10);
+                const verseListStr = chapterMatch[2];
+                if (!isNaN(chapter) && verseListStr) {
+                    const verseNumbers = parseVerseList(verseListStr);
+                    verseNumbers.forEach(vNum => {
+                        const verseData = state.verses.find(v => v.book_number === book.book_number && v.chapter === chapter && v.verse === vNum);
+                        if (verseData) allVerses.push(verseData);
+                    });
+                }
+            }
         }
     }
     return allVerses;
@@ -219,3 +240,32 @@ export const generateSlugId = (title, existingEntries = []) => {
 
     return slug;
 };
+
+export function findCommentsForVerse(bookNumber, chapterNumber, verseNumber) {
+    const allFoundCommentaries = [];
+    if (!state.availableCommentaries) return [];
+    for (const source of state.availableCommentaries) {
+        const foundEntries = source.data.filter(c => {
+            if (c.book_number !== bookNumber) return false;
+            
+            const chapterFrom = c.chapter_number_from;
+            const chapterTo = c.chapter_number_to === 0 ? chapterFrom : c.chapter_number_to;
+            if (chapterNumber < chapterFrom || chapterNumber > chapterTo) return false;
+
+            const verseFrom = c.verse_number_from;
+            const verseTo = c.verse_number_to === 0 ? verseFrom : c.verse_number_to;
+            if (verseNumber < verseFrom || verseNumber > verseTo) return false;
+            
+            return true;
+        });
+
+        if (foundEntries.length > 0) {
+            allFoundCommentaries.push({
+                sourceId: source.id,
+                name: source.name,
+                entries: foundEntries
+            });
+        }
+    }
+    return allFoundCommentaries;
+}

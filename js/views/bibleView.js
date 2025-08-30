@@ -8,35 +8,6 @@ import { createFilterPillsHTML, renderVerseBlockHTML, renderTagsHTML } from '../
 const appContainer = document.getElementById('app-container');
 const bibleNavContainer = document.getElementById('bible-nav-container');
 
-export function findCommentsForVerse(bookNumber, chapterNumber, verseNumber) {
-    const allFoundCommentaries = [];
-    if (!state.availableCommentaries) return [];
-    for (const source of state.availableCommentaries) {
-        const foundEntries = source.data.filter(c => {
-            if (c.book_number !== bookNumber) return false;
-            
-            const chapterFrom = c.chapter_number_from;
-            const chapterTo = c.chapter_number_to === 0 ? chapterFrom : c.chapter_number_to;
-            if (chapterNumber < chapterFrom || chapterNumber > chapterTo) return false;
-
-            const verseFrom = c.verse_number_from;
-            const verseTo = c.verse_number_to === 0 ? verseFrom : c.verse_number_to;
-            if (verseNumber < verseFrom || verseNumber > verseTo) return false;
-            
-            return true;
-        });
-
-        if (foundEntries.length > 0) {
-            allFoundCommentaries.push({
-                sourceId: source.id,
-                name: source.name,
-                entries: foundEntries
-            });
-        }
-    }
-    return allFoundCommentaries;
-}
-
 function renderBibleNav(currentBookNumber, currentChapter) {
     const book = utils.getBook(currentBookNumber);
     if (!book) return;
@@ -67,35 +38,23 @@ function setupTranslationControls(bookNumber, chapter, verseNum) {
     const comparisonContainer = document.getElementById('comparison-verses-container');
     const allButtonsGroup = document.getElementById('translation-buttons-group');
     if (!comparisonCard || !comparisonContainer) return;
-    
     const removeComparisonVerse = (translationId) => {
         const verseItem = comparisonContainer.querySelector(`[data-translation-id="${translationId}"]`);
         if (verseItem) verseItem.remove();
         const controlButton = allButtonsGroup.querySelector(`button[data-translation-id="${translationId}"]`);
         if (controlButton) controlButton.classList.remove('active');
     };
-    
     const addComparisonVerse = (translationId) => {
         if (comparisonContainer.querySelector(`[data-translation-id="${translationId}"]`)) return;
         const translation = state.availableTranslations.find(t => t.id === translationId);
         const verseText = utils.getVerseText(bookNumber, chapter, verseNum, translationId);
         if (translation && verseText) {
-            const book = utils.getBook(bookNumber);
-            const fullRef = `${book.long_name} ${chapter}:${verseNum}`;
-            const plainVerseText = utils.extractPlainTextFromHtml(verseText);
-            const textToCopy = `${fullRef} ${plainVerseText} (${translation.name})`;
-            
             const verseElement = document.createElement('div');
             verseElement.className = 'comparison-verse-item';
             verseElement.dataset.translationId = translationId;
             verseElement.innerHTML = `
                 <div class="comparison-verse-header">
-                    <div class="d-flex align-items-center gap-2">
-                        <strong>${translation.name}</strong>
-                        <button type="button" class="btn-icon copy-comparison-btn" title="Vers kopieren" data-copy-text="${textToCopy}">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
+                    <strong>${translation.name}</strong>
                     <button type="button" class="remove-comparison-btn" title="Entfernen"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <p class="comparison-verse-text">${formatVerseText(verseText, bookNumber)}</p>`;
@@ -104,23 +63,9 @@ function setupTranslationControls(bookNumber, chapter, verseNum) {
             if (button) button.classList.add('active');
         }
     };
-    
     comparisonCard.addEventListener('click', (e) => {
         const target = e.target.closest('button');
         if (!target) return;
-        
-        if (target.classList.contains('copy-comparison-btn')) {
-            const textToCopy = target.dataset.copyText;
-            if (textToCopy && navigator.clipboard) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    utils.showToast('Vers kopiert!', true);
-                }).catch(err => {
-                    utils.showToast('Fehler beim Kopieren.', false);
-                });
-            }
-            return;
-        }
-
         const translationId = target.dataset.translationId;
         if (translationId) {
             target.classList.contains('active') ? removeComparisonVerse(translationId) : addComparisonVerse(translationId);
@@ -132,18 +77,13 @@ function setupTranslationControls(bookNumber, chapter, verseNum) {
             comparisonContainer.querySelectorAll('.comparison-verse-item').forEach(item => removeComparisonVerse(item.dataset.translationId));
         }
     });
-}
-
-function buildSectionHeader(iconClass, titleText, actionButtonsHTML = '') {
-    return `
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 section-header">
-            <div class="d-flex align-items-center gap-2">
-                <i class="${iconClass}"></i>
-                <span class="view-title mb-0" style="font-size: 1.25rem;">${titleText}</span>
-            </div>
-            ${actionButtonsHTML}
-        </div>
-    `;
+    comparisonContainer.addEventListener('click', (e) => {
+        const removeButton = e.target.closest('.remove-comparison-btn');
+        if (removeButton) {
+            const verseItem = removeButton.closest('.comparison-verse-item');
+            if (verseItem) removeComparisonVerse(verseItem.dataset.translationId);
+        }
+    });
 }
 
 export function renderBibleBookOverview() {
@@ -429,7 +369,7 @@ export function renderVerseDetailView(bookNumber, chapter, verseNum) {
 
     renderBibleNav(bookNumber, chapter);
     
-    const commentariesBySource = findCommentsForVerse(bookNumber, chapter, verseNum);
+    const commentariesBySource = utils.findCommentsForVerse(bookNumber, chapter, verseNum);
     
     let commentaryHTML = '';
     if (commentariesBySource.length > 0) {
@@ -443,8 +383,8 @@ export function renderVerseDetailView(bookNumber, chapter, verseNum) {
 
         const commentaryPanelsHTML = commentariesBySource.map((source, index) => {
             const itemsHTML = source.entries.map(comment => 
-                `<div class="commentary-item markdown-body">${processStrongsContentForDisplay(comment.text)}</div>`
-            ).join('<hr class="my-3">');
+                `<div class="commentary-item markdown-body">${processStrongsContentForDisplay(comment.text, { bookNumber, chapterNumber: chapter })}</div>`
+            ).join('');
             
             return `<div class="commentary-panel" id="commentary-panel-${source.sourceId}" style="display: ${index === 0 ? 'block' : 'none'};">
                 ${itemsHTML}
@@ -516,6 +456,12 @@ export function renderVerseDetailView(bookNumber, chapter, verseNum) {
         </div>
     </div>`;
     
+    const strongsToggleHTML = `
+        <button class="btn btn-sm btn-icon active" id="inline-strongs-toggle" title="Strongs-Nummern im Text an/aus">
+            <i class="fa-solid fa-font"></i>
+        </button>
+    `;
+
     const translationCompareHTML = `
     <div class="card mb-4" id="translation-comparison-card"> 
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -523,9 +469,12 @@ export function renderVerseDetailView(bookNumber, chapter, verseNum) {
                 <i class="fa-solid fa-right-left"></i>
                 <span>Übersetzungen vergleichen</span>
             </div>
-            <div id="translation-actions" class="btn-group btn-group-sm flex-wrap" role="group">
-                <button type="button" class="btn btn-primary btn-icon" id="add-all-translations-btn" title="Alle Übersetzungen anzeigen"><i class="fa-solid fa-angles-down"></i></button>
-                <button type="button" class="btn btn-outline-secondary btn-icon" id="remove-all-translations-btn" title="Alle Übersetzungen entfernen"><i class="fa-solid fa-xmark"></i></button>
+            <div class="d-flex align-items-center gap-3">
+                ${strongsToggleHTML}
+                <div id="translation-actions" class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-primary btn-icon" id="add-all-translations-btn" title="Alle Übersetzungen anzeigen"><i class="fa-solid fa-angles-down"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-icon" id="remove-all-translations-btn" title="Alle Übersetzungen entfernen"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -561,7 +510,7 @@ export function renderVerseDetailView(bookNumber, chapter, verseNum) {
     const verseNotes = (state.notes[verseKey] || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
     
     const notesHTML = verseNotes.map((note, index) => {
-        const processedNote = getProcessedEntry(note);
+        const processedNote = getProcessedEntry(note, { bookNumber, chapterNumber: chapter });
         const indicators = [];
         if (processedNote.flags?.hasCrossReference) indicators.push('<i class="fa-solid fa-link" title="Hat Querverweise" style="color:var(--secondary-color);"></i>');
         if (processedNote.flags?.hasYoutube) indicators.push('<i class="fa-brands fa-youtube" title="Hat YouTube-Videos" style="color:red;"></i>');

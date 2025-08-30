@@ -2,17 +2,45 @@ import * as state from '../state.js';
 import * as utils from '../utils.js';
 
 const stopWords = new Set([
-    'der', 'die', 'das', 'ein', 'eine', 'einer', 'eines', 'einem', 'einen',
-    'und', 'oder', 'aber', 'sondern', 'als', 'dass', 'wenn', 'weil',
-    'ich', 'du', 'er', 'sie', 'es', 'wir', 'ihr', 'sie',
-    'sich', 'mich', 'dich', 'uns', 'euch',
-    'mein', 'dein', 'sein', 'ihr', 'unser', 'euer',
-    'bin', 'bist', 'ist', 'sind', 'seid', 'war', 'warst', 'waren', 'wart',
-    'habe', 'hast', 'hat', 'haben', 'habt',
-    'in', 'an', 'auf', 'für', 'von', 'zu', 'mit', 'nach', 'bei', 'seit',
-    'aus', 'durch', 'gegen', 'ohne', 'um', 'während',
-    'nicht', 'auch', 'noch', 'schon', 'sehr', 'nur', 'so', 'wie',
-    'hier', 'dort', 'da', 'wo', 'was', 'wer', 'wen', 'wem', 'wessen'
+  'der', 'die', 'das', 'ein', 'eine', 'einer', 'eines', 'einem', 'einen',
+  'und', 'oder', 'aber', 'sondern', 'als', 'dass', 'wenn', 'weil',
+  'ich', 'du', 'er', 'sie', 'es', 'wir', 'ihr', 'sich',
+  'mich', 'dich', 'uns', 'euch',
+  'mein', 'dein', 'sein', 'ihr', 'unser', 'euer', 'ihre', 'ihres',
+  'bin', 'bist', 'ist', 'sind', 'seid', 'war', 'warst', 'waren', 'wart',
+  'habe', 'hast', 'hat', 'haben', 'habt',
+  'in', 'an', 'auf', 'für', 'von', 'zu', 'mit', 'nach', 'bei', 'seit', 'aus', 'durch', 'gegen', 'ohne', 'um', 'während',
+  'nicht', 'auch', 'noch', 'schon', 'sehr', 'nur', 'so', 'wie',
+  'hier', 'dort', 'da', 'wo', 'was', 'wer', 'wen', 'wem', 'wessen',
+
+  // Weitere deutsche Stoppwörter und Variationen
+  'am', 'zum', 'zur', 'den', 'dem', 'des', 'ins', 'ans', 'aufs', 'vors', 'hinterm', 'unterm',
+  'wird', 'wurde', 'worden', 'werden', 'werde', 'wirst', 'würde', 'würdest', 'würden', 'würdet',
+  'gewesen', 'geworden', 'hätten', 'hatte', 'hättest', 'hattest', 'hielte', 'hieltst',
+  'konnte', 'könnte', 'könnten', 'musste', 'muss', 'müsste', 'müssten',
+  'soll', 'sollte', 'sollten', 'will', 'wollte', 'wollten',
+  'jede', 'jeder', 'jedes', 'alle', 'allem', 'allen', 'alles',
+  'man', 'manche', 'manchem', 'manches',
+  'ganz', 'fast', 'kaum', 'sehr', 'auch', 'noch', 'aber',
+  'jedoch', 'allerdings', 'vielmehr', 'sogar', 'somit', 'sodass', 'damit',
+  'ob', 'obgleich', 'obwohl', 'wobei', 'woher', 'wohin',
+  'einmal', 'mehrmals', 'immer', 'nie', 'niemals', 'oft', 'selten',
+  'bitte', 'danke',
+
+  // Englische Stoppwörter
+  'a', 'an', 'and', 'the', 'is', 'are', 'was', 'were', 'be', 'being', 'been',
+  'to', 'of', 'in', 'on', 'at', 'for', 'with', 'from', 'by', 'about', 'as', 'into',
+  'but', 'or', 'not', 'no', 'only', 'very', 'just', 'more', 'most', 'some', 'any', 'all',
+  'he', 'she', 'it', 'they', 'we', 'you', 'me', 'us', 'him', 'her', 'them',
+  'his', 'her', 'its', 'their', 'our', 'my', 'your',
+  'what', 'who', 'whom', 'where', 'when', 'why', 'how', 'which',
+  'this', 'that', 'these', 'those',
+  'have', 'has', 'had', 'do', 'does', 'did', 'done',
+  'i', 'you', 'he', 'she', 'it', 'we', 'they',
+  'will', 'would', 'shall', 'should', 'can', 'could', 'may', 'might',
+  'down', 'up', 'out', 'off', 'on', 'then', 'now', 'once', 'here', 'there',
+  'after', 'before', 'above', 'below', 'between', 'through', 'under', 'over', 'around',
+  'against', 'without', 'within', 'since', 'until',
 ]);
 
 function lazyCheck(word, index) {
@@ -33,16 +61,17 @@ function lazyCheck(word, index) {
     return null;
 }
 
-function parsePlainTextMentions(root) {
+function parsePlainTextMentions(root, context = {}) {
     const internalLinks = [];
     const chapterLinks = [];
     const uniqueLinks = new Map();
-    let lastSeenBook = null;
-    let lastSeenChapter = null;
+    let lastSeenBook = context.bookNumber ? utils.getBook(context.bookNumber) : null;
+    let lastSeenChapter = context.chapterNumber || null;
 
-    const verseMentionSource = `\\b(?:(${utils.getBookShortNamesPattern()})\\s*)?(\\d+)(?::|,|\\s)\\s*([\\d-–—.,;ff]+)\\b`;
+    const explicitVerseSource = `\\b(?:(${utils.getBookShortNamesPattern()})\\s*)?(\\d+)(?::|,|\\s)\\s*([\\d-–—.,;ff]+)\\b`;
+    const implicitVerseSource = `\\b(?:V\\.|Vers)\\s*([\\d.,;-]+)\\b`;
     const strongsMentionSource = `\\b([GH]\\d{1,5})\\b`;
-    const combinedRegex = new RegExp(`(${verseMentionSource})|(${strongsMentionSource})`, 'gi');
+    const combinedRegex = new RegExp(`(${explicitVerseSource})|(${implicitVerseSource})|(${strongsMentionSource})`, 'gi');
     
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
     const textNodes = [];
@@ -60,34 +89,38 @@ function parsePlainTextMentions(root) {
         while ((match = combinedRegex.exec(node.nodeValue)) !== null) {
             fragment.appendChild(document.createTextNode(node.nodeValue.slice(lastIndex, match.index)));
             const [
-                fullMatch, verseFullMatch, bookName, chapterStr, verseListStr,
-                strongsFullMatch, strongsId
+                fullMatch, explicitFull, bookName, chapterStr, verseListStr,
+                implicitFull, implicitVerseList,
+                strongsFull, strongsId
             ] = match;
 
-            if (strongsFullMatch) {
+            let versesToAdd = [];
+
+            if (strongsId) {
                 const trigger = document.createElement('span');
                 trigger.className = 'strongs-mention-hover';
                 trigger.dataset.strongId = strongsId.toUpperCase();
                 trigger.textContent = fullMatch;
                 fragment.appendChild(trigger);
-            } else { 
-                let versesToAdd = [];
-                let currentBook = lastSeenBook;
-                let currentChapter = lastSeenChapter; 
-                
-                if (bookName) {
-                    currentBook = utils.findBookByAlias(bookName);
+            } else {
+                if (explicitFull) {
+                    let currentBook = lastSeenBook;
+                    if (bookName) {
+                        currentBook = utils.findBookByAlias(bookName);
+                    }
+                    if (currentBook && chapterStr) {
+                        const currentChapter = parseInt(chapterStr, 10);
+                        versesToAdd = utils.parseVerseList(verseListStr).map(v => ({ book: currentBook, chapter: currentChapter, verse: v }));
+                        lastSeenBook = currentBook;
+                        lastSeenChapter = currentChapter;
+                    }
+                } else if (implicitFull && context.bookNumber && context.chapterNumber) {
+                    const book = utils.getBook(context.bookNumber);
+                    const chapter = context.chapterNumber;
+                    versesToAdd = utils.parseVerseList(implicitVerseList).map(v => ({ book, chapter, verse: v }));
                 }
 
-                if (currentBook && chapterStr) {
-                   currentChapter = parseInt(chapterStr, 10);
-                   versesToAdd = utils.parseVerseList(verseListStr).map(v => ({ book: currentBook, chapter: currentChapter, verse: v }));
-                }
-                
                 if (versesToAdd.length > 0) {
-                    lastSeenBook = versesToAdd[0].book;
-                    lastSeenChapter = versesToAdd[0].chapter; 
-                    
                     const verseDataString = JSON.stringify(versesToAdd.map(v => ({ b: v.book.book_number, c: v.chapter, v: v.verse })));
                     const trigger = document.createElement('span');
                     trigger.className = 'verse-mention-hover';
@@ -154,7 +187,7 @@ function extractResourcesFromContent(htmlContent) {
     return resources;
 };
 
-function processContentForDisplay(content) {
+function processContentForDisplay(content, context = {}) {
     let processedContent = content ?? '';
     const flags = { hasYoutube: false, hasAudio: false, hasVideo: false, hasCrossReference: false };
     
@@ -176,7 +209,7 @@ function processContentForDisplay(content) {
     const root = document.createElement('div');
     root.innerHTML = processedContent;
 
-    const { internalLinks, chapterLinks } = parsePlainTextMentions(root);
+    const { internalLinks, chapterLinks } = parsePlainTextMentions(root, context);
     if (internalLinks.length > 0 || chapterLinks.length > 0) {
         flags.hasCrossReference = true;
     }
@@ -185,13 +218,13 @@ function processContentForDisplay(content) {
     return { processedContent, flags, internalLinks, chapterLinks };
 }
 
-export function getProcessedEntry(entry) {
+export function getProcessedEntry(entry, context = {}) {
     if (entry.processedContent && entry.chapterLinks !== undefined) {
         return entry;
     }
     
     const htmlContent = state.markdownConverter.makeHtml(entry.content || '');
-    const { processedContent, flags, internalLinks, chapterLinks } = processContentForDisplay(htmlContent);
+    const { processedContent, flags, internalLinks, chapterLinks } = processContentForDisplay(htmlContent, context);
     
     entry.processedContent = processedContent;
     entry.flags = flags;
@@ -202,24 +235,43 @@ export function getProcessedEntry(entry) {
     return entry;
 };
 
-export function formatVerseText(rawText, bookNumber) {
+export function formatVerseText(rawText, bookNumber, inlineStrongs = false) {
     if (!rawText) return '';
     let formattedText = rawText;
     const prefix = bookNumber > 390 ? 'G' : 'H';
     formattedText = formattedText.replace(/〈.*?〉/g, '');
     formattedText = formattedText.replace(/\[.*?\]/g, '');
     formattedText = formattedText.replace(/<pb\/?>/g, '').replace(/<br\/?>/g, '');
-    formattedText = formattedText.replace(/<S>(\d+)<\/S>/g, 
-        `<sup><span class="strongs-mention-hover" data-strong-id="${prefix}$1">$1</span></sup>`);
     formattedText = formattedText.replace(/<J>(.*?)<\/J>/g, '<span class="words-of-jesus">$1</span>');
+
+    if (inlineStrongs) {
+        formattedText = formattedText.replace(/([\w\ü\ä\ö\ß\.'-]+)\s*<S>(\d+)<\/S>/g, 
+            `<span class="strongs-mention-hover" data-strong-id="${prefix}$2">$1</span>`);
+        formattedText = formattedText.replace(/<S>\d+<\/S>/g, '');
+    } else {
+        formattedText = formattedText.replace(/<S>(\d+)<\/S>/g, 
+            `<sup><span class="strongs-mention-hover" data-strong-id="${prefix}$1">$1</span></sup>`);
+    }
+
     return formattedText.trim();
 };
 
-export function processStrongsContentForDisplay(htmlContent) {
+export function processStrongsContentForDisplay(htmlContent, context = {}) {
     if (!htmlContent) return '';
 
     const root = document.createElement('div');
     root.innerHTML = htmlContent;
+
+    root.querySelectorAll("a[href^='B:']").forEach(a => {
+        const prevNode = a.previousSibling;
+        if (prevNode && prevNode.nodeType === Node.TEXT_NODE) {
+            const prevText = prevNode.textContent.trim();
+            if (utils.findBookByAlias(prevText)) {
+                a.textContent = `${prevText} ${a.textContent}`;
+                prevNode.remove();
+            }
+        }
+    });
 
     root.querySelectorAll("a[href^='B:']").forEach(a => {
         const href = a.getAttribute('href');
@@ -291,7 +343,7 @@ export function processStrongsContentForDisplay(htmlContent) {
         }
     });
     
-    parsePlainTextMentions(root);
+    parsePlainTextMentions(root, context);
 
     return root.innerHTML;
 };
